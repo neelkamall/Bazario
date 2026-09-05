@@ -1,10 +1,19 @@
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { products } from '../data/products';
+import API_URL from '../api';
 import './ProductDetails.css';
 
 function ProductDetails(props) {
   const { id } = useParams();
-  const product = products.find((p) => p.id === Number(id));
+  const [product, setProduct] = useState(null);
+
+  useEffect(() => {
+    fetch(`${API_URL}/products/${id}`)
+      .then((res) => res.json())
+      .then((data) => setProduct(data.data));
+  }, [id]);
+
+  if (!product) return <p>Loading...</p>;
 
   return (
     <div className="product-detail">

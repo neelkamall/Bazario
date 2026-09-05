@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import API_URL from '../api';
 import './Cart.css';
 
 function Cart(props) {
@@ -11,8 +12,31 @@ function Cart(props) {
       navigate("/login");
       return;
     }
-    props.clearCart();
-    navigate("/order-success");
+
+    const items = props.cartItems.map((item) => ({
+      product: item._id,
+      quantity: 1,
+    }));
+
+    const token = localStorage.getItem("accessToken");
+
+    fetch(`${API_URL}/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ items }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (!result.success) {
+          alert(result.message);
+          return;
+        }
+        props.clearCart();
+        navigate("/order-success");
+      });
   }
 
   return (

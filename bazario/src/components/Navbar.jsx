@@ -8,7 +8,11 @@ function Navbar(props) {
       <div className="navbar-links">
         <Link to="/">Home</Link>
         <Link to="/cart">Cart ({props.cartCount})</Link>
-        <Link to="/login">Login</Link>
+        {props.isLoggedIn ? (
+          <span onClick={props.logoutUser} style={{ cursor: "pointer" }}>Logout</span>
+        ) : (
+          <Link to="/login">Login</Link>
+        )}
       </div>
     </nav>
   );

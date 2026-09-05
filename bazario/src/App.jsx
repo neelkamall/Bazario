@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -11,6 +11,11 @@ import OrderSuccess from './pages/OrderSuccess';
 function App() {
   const [cartItems, setCartItems] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    setIsLoggedIn(!!token);
+  }, []);
 
   function addToCart(product) {
     setCartItems([...cartItems, product]);
@@ -28,9 +33,14 @@ function App() {
     setIsLoggedIn(true);
   }
 
+  function logoutUser() {
+    localStorage.removeItem("accessToken");
+    setIsLoggedIn(false);
+  }
+
   return (
     <div>
-      <Navbar cartCount={cartItems.length} />
+      <Navbar cartCount={cartItems.length} isLoggedIn={isLoggedIn} logoutUser={logoutUser} />
       <Routes>
         <Route path="/" element={<Home addToCart={addToCart} />} />
         <Route path="/product/:id" element={<ProductDetails addToCart={addToCart} />} />
